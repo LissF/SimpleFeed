@@ -36,7 +36,7 @@ public final class HistoryFragment extends BaseFragment implements HistoryView {
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override public void onReceive(final Context context, final Intent intent) {
-            Utils.logD(TAG, "Tweet posted");
+            Utils.logD(TAG, "Tweet posted, refreshing history");
             if (presenter != null && Utils.isInternetAvailable(context)) {
                 presenter.onRefresh();
             }

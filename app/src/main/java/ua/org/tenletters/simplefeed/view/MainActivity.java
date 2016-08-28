@@ -62,6 +62,7 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
 
         realm = Realm.getInstance(new RealmConfiguration.Builder(this)
                 .name("pending")
+                .deleteRealmIfMigrationNeeded()
                 .build());
 
         sendPendingPostsIfWeCan();
@@ -137,11 +138,17 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
     private void sendPendingPostsIfWeCan() {
         if (Utils.isInternetAvailable(this)) {
             realm.executeTransactionAsync(rlm -> {
-                final RealmResults<PendingPost> pendingPosts = rlm.where(PendingPost.class).findAll();
-                for (PendingPost pendingPost : pendingPosts) {
-                    Utils.logD(TAG, "Sending post...");
-                    startService(pendingPost.getIntent());
-                    pendingPost.deleteFromRealm();
+                final TwitterSession session = Twitter.getSessionManager().getActiveSession();
+                if (session != null) {
+                    final RealmResults<PendingPost> pendingPosts = rlm.where(PendingPost.class)
+                            .equalTo("userId", session.getUserId())
+                            .findAll();
+                    for (PendingPost pendingPost : pendingPosts) {
+                        Utils.logD(TAG, "Sending post...");
+                        final Intent intent = pendingPost.getIntent(this);
+                        startService(intent);
+                    }
+                    pendingPosts.deleteAllFromRealm();
                 }
             });
         }
