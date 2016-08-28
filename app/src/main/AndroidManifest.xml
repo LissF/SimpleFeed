@@ -36,6 +36,15 @@
         <activity android:name="ua.org.tenletters.simplefeed.view.LoginActivity" />
 
         <activity android:name="ua.org.tenletters.simplefeed.view.MainActivity" />
+
+        <receiver
+            android:name=".PostFailureReceiver"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

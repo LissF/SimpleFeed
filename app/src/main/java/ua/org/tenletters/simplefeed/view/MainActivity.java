@@ -1,7 +1,10 @@
 package ua.org.tenletters.simplefeed.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,13 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import ua.org.tenletters.simplefeed.R;
+import ua.org.tenletters.simplefeed.Utils;
 import ua.org.tenletters.simplefeed.app.dagger.HasComponent;
+import ua.org.tenletters.simplefeed.model.PendingPost;
 
 public final class MainActivity extends BaseActivity implements HasComponent<MainComponent> {
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -31,6 +43,10 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
     @BindView(R.id.fab) FloatingActionButton fab;
 
     private MainComponent mainComponent;
+
+    private Realm realm;
+
+    private BroadcastReceiver receiver;
 
     private volatile boolean userWantsToExit = false;
 
@@ -44,12 +60,32 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
         init(R.layout.activity_main);
         initInjector();
 
+        realm = Realm.getInstance(new RealmConfiguration.Builder(this)
+                .name("pending")
+                .build());
+
+        sendPendingPostsIfWeCan();
+
         setSupportActionBar(toolbar);
 
         viewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
 
         setTitle("@" + Twitter.getSessionManager().getActiveSession().getUserName());
+
+        receiver = new BroadcastReceiver() {
+            @Override public void onReceive(final Context context, final Intent intent) {
+                Utils.logD(TAG, "Connectivity changed");
+                sendPendingPostsIfWeCan();
+            }
+        };
+        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), null, null);
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+        realm.close();
     }
 
     @Override public void setTitle(CharSequence title) {
@@ -91,8 +127,24 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
     }
 
     @OnClick(R.id.fab) public void onFabClicked() {
-        // TODO: compose tweet
-        Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_LONG).show();
+        final TwitterSession session = Twitter.getSessionManager().getActiveSession();
+        final Intent intent = new ComposerActivity.Builder(this)
+                .session(session)
+                .createIntent();
+        startActivity(intent);
+    }
+
+    private void sendPendingPostsIfWeCan() {
+        if (Utils.isInternetAvailable(this)) {
+            realm.executeTransactionAsync(rlm -> {
+                final RealmResults<PendingPost> pendingPosts = rlm.where(PendingPost.class).findAll();
+                for (PendingPost pendingPost : pendingPosts) {
+                    Utils.logD(TAG, "Sending post...");
+                    startService(pendingPost.getIntent());
+                    pendingPost.deleteFromRealm();
+                }
+            });
+        }
     }
 
     /**

@@ -1,5 +1,10 @@
 package ua.org.tenletters.simplefeed.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -14,8 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ua.org.tenletters.simplefeed.R;
+import ua.org.tenletters.simplefeed.Utils;
 
-// TODO: add BroadcastReceiver to refresh feed on Internet connection
 public final class FeedFragment extends BaseFragment implements FeedView {
 
     private static final String TAG = "FeedFragment";
@@ -26,6 +31,15 @@ public final class FeedFragment extends BaseFragment implements FeedView {
     @BindView(R.id.updater) SwipeRefreshLayout updater;
 
     private Unbinder unbinder;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override public void onReceive(final Context context, final Intent intent) {
+            Utils.logD(TAG, "Connectivity changed");
+            if (presenter != null && Utils.isInternetAvailable(context)) {
+                presenter.onRefresh();
+            }
+        }
+    };
 
     public FeedFragment() {
         // Required empty public constructor
@@ -65,6 +79,18 @@ public final class FeedFragment extends BaseFragment implements FeedView {
                 presenter.onRefresh();
             }
         });
+
+        if (getContext() != null) {
+            getContext().registerReceiver(receiver,
+                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION), null, null);
+        }
+    }
+
+    @Override public void onDestroy() {
+        super.onDestroy();
+        if (getContext() != null) {
+            getContext().unregisterReceiver(receiver);
+        }
     }
 
     @Override public void setFeedAdapter(final ListAdapter adapter) {
