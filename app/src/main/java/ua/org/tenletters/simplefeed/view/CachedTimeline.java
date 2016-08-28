@@ -21,16 +21,16 @@ import io.realm.Sort;
 import ua.org.tenletters.simplefeed.Utils;
 import ua.org.tenletters.simplefeed.model.CachedTweet;
 
-public final class CachedTimeline implements Timeline<Tweet> {
+final class CachedTimeline implements Timeline<Tweet> {
 
     private static final String TAG = "CachedTimeline";
 
     private static final int LIMIT = 50;
 
-    private Context context;
+    private final Context context;
     private final Timeline<Tweet> timeline;
-    private Realm realm;
-    private Handler mainHandler;
+    private final Realm realm;
+    private final Handler mainHandler;
 
     public CachedTimeline(final Context context, final Timeline<Tweet> timeline, final Realm realm) {
         this.context = context;
@@ -62,7 +62,7 @@ public final class CachedTimeline implements Timeline<Tweet> {
             realm.executeTransactionAsync(realm -> {
                 final List<CachedTweet> cachedTweets = new LinkedList<>();
                 final RealmResults<CachedTweet> results = getPreviousCachedTweets(realm, maxPosition);
-                if (results != null && !results.isEmpty()) {
+                if (!results.isEmpty()) {
                     cachedTweets.addAll(results.subList(0, Math.min(LIMIT, results.size())));
                 }
                 returnCachedDataToCallback(cachedTweets, cb);

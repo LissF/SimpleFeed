@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -34,7 +33,7 @@ public final class HistoryFragment extends BaseFragment implements HistoryView {
 
     private Unbinder unbinder;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override public void onReceive(final Context context, final Intent intent) {
             Utils.logD(TAG, "Tweet posted, refreshing history");
             if (presenter != null && Utils.isInternetAvailable(context)) {
@@ -101,9 +100,9 @@ public final class HistoryFragment extends BaseFragment implements HistoryView {
         }
     }
 
-    @Override public void setRefreshing(final boolean refreshing) {
+    @Override public void stopRefreshing() {
         if (updater != null) {
-            updater.setRefreshing(refreshing);
+            updater.setRefreshing(false);
         }
     }
 }

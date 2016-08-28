@@ -32,7 +32,7 @@ public final class FeedFragment extends BaseFragment implements FeedView {
 
     private Unbinder unbinder;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override public void onReceive(final Context context, final Intent intent) {
             Utils.logD(TAG, "Connectivity changed");
             if (presenter != null && Utils.isInternetAvailable(context)) {
@@ -99,9 +99,9 @@ public final class FeedFragment extends BaseFragment implements FeedView {
         }
     }
 
-    @Override public void setRefreshing(final boolean refreshing) {
+    @Override public void stopRefreshing() {
         if (updater != null) {
-            updater.setRefreshing(refreshing);
+            updater.setRefreshing(false);
         }
     }
 }

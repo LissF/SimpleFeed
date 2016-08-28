@@ -69,14 +69,14 @@ public final class HistoryPresenter implements Presenter {
             @Override public void success(final Result<TimelineResult<Tweet>> result) {
                 if (view != null) {
                     Utils.logD(TAG, "Refreshed");
-                    view.setRefreshing(false);
+                    view.stopRefreshing();
                 }
             }
 
             @Override public void failure(final TwitterException exception) {
                 if (view != null) {
                     Utils.logD(TAG, "Failed to refresh");
-                    view.setRefreshing(false);
+                    view.stopRefreshing();
                 }
             }
         });

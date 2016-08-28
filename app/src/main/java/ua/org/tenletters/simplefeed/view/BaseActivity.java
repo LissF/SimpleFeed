@@ -12,7 +12,7 @@ import ua.org.tenletters.simplefeed.app.dagger.ApplicationComponent;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected void init(@LayoutRes final int layout) {
+    void init(@LayoutRes final int layout) {
         setContentView(layout);
         ButterKnife.bind(this);
     }
@@ -22,36 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         getApplicationComponent().inject(this);
     }
 
-    /**
-     * Adds a {@link Fragment} to this activity's layout.
-     *
-     * @param containerViewId The container view to where add the fragment.
-     * @param fragment        The fragment to be added.
-     */
-    protected void addFragment(@IdRes final int containerViewId, final Fragment fragment) {
-        if (!isFinishing()) {
-            this.getSupportFragmentManager().beginTransaction()
-                    .replace(containerViewId, fragment)
-                    .addToBackStack(fragment.getClass().getSimpleName())
-                    .commitAllowingStateLoss();
-        }
-    }
-
-    /**
-     * Replaces current {@link Fragment} in this activity's layout.
-     *
-     * @param containerViewId The container view to where add the fragment.
-     * @param fragment        The fragment to be added instead of current one.
-     */
-    protected void replaceFragment(@IdRes final int containerViewId, final Fragment fragment) {
-        if (!isFinishing()) {
-            this.getSupportFragmentManager().beginTransaction()
-                    .replace(containerViewId, fragment)
-                    .commitNowAllowingStateLoss();
-        }
-    }
-
-    protected ApplicationComponent getApplicationComponent() {
+    ApplicationComponent getApplicationComponent() {
         return App.getApplicationComponent(this);
     }
 }

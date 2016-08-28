@@ -160,7 +160,7 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        private int[] tabTitles = {
+        private final int[] tabTitles = {
                 R.string.tab_feed,
                 R.string.tab_history
         };

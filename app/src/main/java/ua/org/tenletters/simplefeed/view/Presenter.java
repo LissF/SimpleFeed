@@ -3,7 +3,7 @@ package ua.org.tenletters.simplefeed.view;
 /**
  * Interface representing a Presenter in a model view presenter (MVP) pattern.
  */
-public interface Presenter {
+interface Presenter {
     /**
      * Method that control the lifecycle of the view. It should be called in the view's
      * (Activity or Fragment) onResume() method.

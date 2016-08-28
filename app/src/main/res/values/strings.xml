@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Simple Feed</string>
+
     <string name="login_text">Hey, Stranger!</string>
-    <string name="tweet_field_hint">Your tweet</string>
+
     <string name="tab_feed">feed</string>
     <string name="tab_history">history</string>
+
     <string name="tap_to_close">Tap again to close the app</string>
+    <string name="lock_image_description">Log Out</string>
 </resources>
