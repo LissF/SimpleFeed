@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterSession;
 
-import ua.org.tenletters.simplefeed.view.LoginActivity;
-import ua.org.tenletters.simplefeed.view.MainActivity;
+import ua.org.tenletters.simplefeed.view.login.LoginActivity;
+import ua.org.tenletters.simplefeed.view.home.MainActivity;
 
 public final class SplashActivity extends AppCompatActivity {
 

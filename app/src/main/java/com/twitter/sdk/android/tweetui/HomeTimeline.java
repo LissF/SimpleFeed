@@ -11,12 +11,12 @@ import retrofit2.Call;
 public class HomeTimeline extends BaseTimeline implements Timeline<Tweet> {
 
     private static final String SCRIBE_SECTION = "home";
+
     private final Integer maxItemsPerRequest;
     private final Boolean includeReplies;
     private final Boolean includeEntities;
 
-    private HomeTimeline(TweetUi tweetUi, Integer maxItemsPerRequest, Boolean includeReplies, Boolean includeEntities) {
-        super(tweetUi);
+    private HomeTimeline(Integer maxItemsPerRequest, Boolean includeReplies, Boolean includeEntities) {
         this.maxItemsPerRequest = maxItemsPerRequest;
         this.includeReplies = includeReplies != null && includeReplies;
         this.includeEntities = includeEntities;
@@ -43,22 +43,12 @@ public class HomeTimeline extends BaseTimeline implements Timeline<Tweet> {
 
     public static class Builder {
 
-        private final TweetUi tweetUi;
         private Integer maxItemsPerRequest;
         private Boolean includeReplies;
         private Boolean includeEntities;
 
         public Builder() {
-            this(TweetUi.getInstance());
-        }
-
-        public Builder(TweetUi tweetUi) {
             this.maxItemsPerRequest = 30;
-            if (tweetUi == null) {
-                throw new IllegalArgumentException("TweetUi instance must not be null");
-            } else {
-                this.tweetUi = tweetUi;
-            }
         }
 
         public HomeTimeline.Builder maxItemsPerRequest(Integer maxItemsPerRequest) {
@@ -77,7 +67,7 @@ public class HomeTimeline extends BaseTimeline implements Timeline<Tweet> {
         }
 
         public HomeTimeline build() {
-            return new HomeTimeline(this.tweetUi, this.maxItemsPerRequest, this.includeReplies, this.includeEntities);
+            return new HomeTimeline(this.maxItemsPerRequest, this.includeReplies, this.includeEntities);
         }
     }
 }

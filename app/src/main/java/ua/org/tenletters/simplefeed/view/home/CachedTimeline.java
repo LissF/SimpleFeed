@@ -1,4 +1,4 @@
-package ua.org.tenletters.simplefeed.view;
+package ua.org.tenletters.simplefeed.view.home;
 
 import android.content.Context;
 import android.os.Handler;
@@ -32,7 +32,7 @@ final class CachedTimeline implements Timeline<Tweet> {
     private final Realm realm;
     private final Handler mainHandler;
 
-    public CachedTimeline(final Context context, final Timeline<Tweet> timeline, final Realm realm) {
+    CachedTimeline(final Context context, final Timeline<Tweet> timeline, final Realm realm) {
         this.context = context;
         this.timeline = timeline;
         this.realm = realm;
@@ -110,7 +110,7 @@ final class CachedTimeline implements Timeline<Tweet> {
     private final class CachingCallback extends Callback<TimelineResult<Tweet>> {
         private final Callback<TimelineResult<Tweet>> cb;
 
-        public CachingCallback(final Callback<TimelineResult<Tweet>> cb) {
+        CachingCallback(final Callback<TimelineResult<Tweet>> cb) {
             this.cb = cb;
         }
 

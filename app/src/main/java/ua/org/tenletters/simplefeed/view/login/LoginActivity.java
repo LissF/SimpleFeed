@@ -1,4 +1,4 @@
-package ua.org.tenletters.simplefeed.view;
+package ua.org.tenletters.simplefeed.view.login;
 
 
 import android.content.Context;
@@ -14,6 +14,8 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import butterknife.BindView;
 import ua.org.tenletters.simplefeed.R;
 import ua.org.tenletters.simplefeed.Utils;
+import ua.org.tenletters.simplefeed.view.BaseActivity;
+import ua.org.tenletters.simplefeed.view.home.MainActivity;
 
 public final class LoginActivity extends BaseActivity {
 

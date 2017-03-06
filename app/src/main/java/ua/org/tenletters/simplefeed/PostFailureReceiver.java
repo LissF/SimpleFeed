@@ -21,7 +21,7 @@ public final class PostFailureReceiver extends BroadcastReceiver {
             final Intent retryIntent =
                     intent.getParcelableExtra(TweetUploadService.EXTRA_RETRY_INTENT);
 
-            final Realm realm = Realm.getInstance(new RealmConfiguration.Builder(context)
+            final Realm realm = Realm.getInstance(new RealmConfiguration.Builder()
                     .name("pending")
                     .deleteRealmIfMigrationNeeded()
                     .build());

@@ -1,4 +1,4 @@
-package ua.org.tenletters.simplefeed.view;
+package ua.org.tenletters.simplefeed.view.home;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,21 +26,18 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import ua.org.tenletters.simplefeed.R;
 import ua.org.tenletters.simplefeed.Utils;
-import ua.org.tenletters.simplefeed.app.dagger.HasComponent;
 import ua.org.tenletters.simplefeed.model.PendingPost;
+import ua.org.tenletters.simplefeed.view.BaseActivity;
+import ua.org.tenletters.simplefeed.view.login.LoginActivity;
 
-public final class MainActivity extends BaseActivity implements HasComponent<MainComponent> {
+public final class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
 
-    @BindView(R.id.appbar) AppBarLayout appbar;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.tabs) TabLayout tabLayout;
     @BindView(R.id.container) ViewPager viewPager;
-    @BindView(R.id.fab) FloatingActionButton fab;
-
-    private MainComponent mainComponent;
 
     private Realm realm;
 
@@ -58,9 +53,8 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(R.layout.activity_main);
-        initInjector();
 
-        realm = Realm.getInstance(new RealmConfiguration.Builder(this)
+        realm = Realm.getInstance(new RealmConfiguration.Builder()
                 .name("pending")
                 .deleteRealmIfMigrationNeeded()
                 .build());
@@ -89,20 +83,16 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
         realm.close();
     }
 
-    @Override public void setTitle(CharSequence title) {
+    @Override public void setTitle(final CharSequence title) {
         if (this.title != null) {
             this.title.setText(title);
         }
     }
 
-    @Override public void setTitle(int titleId) {
+    @Override public void setTitle(final int titleId) {
         if (this.title != null) {
             this.title.setText(titleId);
         }
-    }
-
-    @Override public MainComponent getComponent() {
-        return mainComponent;
     }
 
     @Override public void onBackPressed() {
@@ -113,13 +103,6 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
             toolbar.postDelayed(() -> userWantsToExit = false, 5000);
             Toast.makeText(this, R.string.tap_to_close, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void initInjector() {
-        this.mainComponent = DaggerMainComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .mainModule(new MainModule(this))
-                .build();
     }
 
     @OnClick(R.id.exit) public void onLockClicked() {
@@ -158,14 +141,14 @@ public final class MainActivity extends BaseActivity implements HasComponent<Mai
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         private final int[] tabTitles = {
                 R.string.tab_feed,
                 R.string.tab_history
         };
 
-        public SectionsPagerAdapter(final FragmentManager fm) {
+        SectionsPagerAdapter(final FragmentManager fm) {
             super(fm);
         }
 

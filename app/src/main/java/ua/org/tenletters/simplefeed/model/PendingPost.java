@@ -54,7 +54,7 @@ public class PendingPost extends RealmObject {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(final String text) {
         this.text = text;
     }
 
@@ -62,7 +62,7 @@ public class PendingPost extends RealmObject {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(final Long userId) {
         this.userId = userId;
     }
 }
